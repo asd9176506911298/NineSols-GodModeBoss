@@ -2,11 +2,11 @@
 schemaVersion = "0.0.1"
 
 [package]
-namespace = "yournamespace"
-name = "YourModName"
+namespace = "GodModeBoss"
+name = "GodModeBoss"
 versionNumber = "0.1.0"
-description = "your mod description"
-websiteUrl = "link to the git repo"
+description = "Goto Phase 1/2/3 Boss Invincible"
+websiteUrl = "https://github.com/asd9176506911298/NineSols-GodModeBoss"
 containsNsfwContent = false
 
 [package.dependencies]
