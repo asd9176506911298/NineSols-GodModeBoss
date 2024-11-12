@@ -1,4 +1,5 @@
-# Nine Sols Example Mod
+# GodModeBoss
 
-Write a description of your mod here, it will be displayed on thunderstore.
-Remember to update the icon.png to something representing your mod.
+# # Feature
+- Goto Phase 1/2/3
+- Boss Invincible
