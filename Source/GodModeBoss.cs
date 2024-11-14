@@ -16,7 +16,6 @@ namespace GodModeBoss;
 public class GodModeBoss : BaseUnityPlugin {
     public static GodModeBoss Instance { get; private set; }
     private Harmony mainHarmony = null!;
-    private Harmony monsterBasePatcherHarmony = null!;
     private ConfigEntry<bool>[] phaseButtons;
     private ConfigEntry<bool> invincibleButton;
     //private ConfigEntry<bool> bossSpeedUpButton;
@@ -31,18 +30,6 @@ public class GodModeBoss : BaseUnityPlugin {
 
         // Initialize the main Harmony instance for GodModeBoss and patch all
         mainHarmony = Harmony.CreateAndPatchAll(typeof(GodModeBoss).Assembly);
-
-        // Additional Harmony instance for conditional MonsterBase patching
-        //monsterBasePatcherHarmony = new Harmony("MonsterBasePatcher");
-
-        //// Check if UpdateAnimatorSpeed exists in MonsterBase and apply patch if it does
-        //var method = AccessTools.Method(typeof(MonsterBase), "UpdateAnimatorSpeed");
-        //if (method != null) {
-        //    monsterBasePatcherHarmony.Patch(method, prefix: new HarmonyMethod(typeof(MonsterBasePatcher), nameof(MonsterBasePatcher.UpdateAnimatorSpeed)));
-        //    Logger.LogInfo("UpdateAnimatorSpeed patch applied.");
-        //} else {
-        //    Logger.LogInfo("UpdateAnimatorSpeed method not found. Skipping patch.");
-        //}
 
         // Initialize config entries for phase buttons
         phaseButtons = new[] {
@@ -98,22 +85,6 @@ public class GodModeBoss : BaseUnityPlugin {
         }
     }
 
-    private void ToggleBossSpeedUp(bool enable) {
-        foreach (var boss in MonsterManager.Instance.monsterDict.Values) {
-            if (boss.tag == "Boss") {
-                if (enable) {
-                    // Apply a 1.5x multiplier each time, stacking the speed
-                    boss.animator.speed *= 1.15f;
-                } else {
-                    // Reset to the original speed
-                    boss.animator.speed = 1;
-                }
-
-                ToastManager.Toast($"SpeedUp Multiplier Applied: {boss.animator.speed} for {boss}");
-            }
-        }
-    }
-
     private bool TryGetMonsterStat(MonsterBase monster, out MonsterStat monsterStat) {
         var field = typeof(MonsterBase).GetField("monsterStat") ?? typeof(MonsterBase).GetField("_monsterStat");
         monsterStat = field?.GetValue(monster) as MonsterStat;
@@ -128,10 +99,10 @@ public class GodModeBoss : BaseUnityPlugin {
         SingletonBehaviour<GameCore>.Instance.monsterHpUI.CurrentBossHP?.TempShow();
         monster.monsterCore.DisablePushAway();
 
-        //var sensors = GetAttackSensors(monster);
-        //foreach (var sensor in sensors) {
-        //    sensor?.ClearQueue();
-        //}
+        var sensors = GetAttackSensors(monster);
+        foreach (var sensor in sensors) {
+            sensor?.ClearQueue();
+        }
 
         //monster.VelX = 0f;
     }
@@ -152,7 +123,6 @@ public class GodModeBoss : BaseUnityPlugin {
 
         while (isCyclingPhases) {
             SetPhase(phaseIndex);
-            //ToggleBossSpeedUp(bossSpeedUpButton.Value);
 
             // Cycle through phases 0, 1, 2
             phaseIndex = (phaseIndex + 1) % 3;
@@ -186,6 +156,5 @@ public class GodModeBoss : BaseUnityPlugin {
         private void OnDestroy() {
         // Unpatch both Harmony instances
         mainHarmony.UnpatchSelf();
-        //monsterBasePatcherHarmony.UnpatchSelf();
     }
 }

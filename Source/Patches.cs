@@ -14,13 +14,3 @@ public class Patches {
     //}
 
 }
-
-//public static class MonsterBasePatcher {
-//    [HarmonyPrefix]
-//    public static bool UpdateAnimatorSpeed(ref MonsterBase __instance) {
-//        if (GodModeBoss.Instance.phaseCycleButton.Value)
-//            return false;
-
-//        return true;
-//    }
-//}
